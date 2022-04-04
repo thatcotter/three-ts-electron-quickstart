@@ -197,3 +197,15 @@ interface gltfMesh extends THREE.Object3D<THREE.Event> {
 interface ColorMaterial extends THREE.Material {
 	color: THREE.Color;
 }
+
+export interface IElectronAPI {
+	handleBackground: (callback: (event: any, value: any) => void) => void;
+	// updateSpriteX: (callback: (event:any, value:any) => void) => void,
+	// writeLEDStatus: (onOff:1|0) => any
+}
+
+declare global {
+	interface Window {
+		electronAPI: IElectronAPI;
+	}
+}
