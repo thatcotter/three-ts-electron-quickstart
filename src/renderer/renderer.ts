@@ -67,6 +67,8 @@ function initScene() {
 	viewOne = new ViewOne(model, renderer);
 	views.push(viewOne);
 
+	viewOne.scene.background = new THREE.Color(0xffffff)
+
 	viewTwo = new ViewTwo(model, renderer);
 	views.push(viewTwo);
 
@@ -93,6 +95,13 @@ function initScene() {
 }
 
 function initListeners() {
+
+	window.electronAPI.handleBackground((event:any, value:any) => {
+		console.log(event)
+		console.log(value)
+		viewTwo.scene.background = new THREE.Color(value)
+	})
+
 	window.addEventListener('resize', onWindowResize, false);
 
 	window.addEventListener('pointermove', onPointerMove);
