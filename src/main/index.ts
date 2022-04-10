@@ -41,8 +41,8 @@ const createWindow = (): void => {
 
 
   board.on("ready", () => {
-    let led = new five.Led(13);
-    led.blink(1000);
+    let led = new five.Led(11);
+    // led.blink(1000);
     // ipcMain.handle('write:LEDStatus', (event: any ,value: 1|0) => {
     //   console.log(value)
     //   if (value === 0) {
@@ -51,6 +51,11 @@ const createWindow = (): void => {
     //     led.on()
     //   }
     // })
+	ipcMain.handle('write:LEDBrightness', (event: any, brightness: number) => {
+		console.log(event)
+		console.log(brightness)
+		led.brightness(brightness * 255)
+	})
 
     let button = new five.Button(8);
     button.on("press", () => {
@@ -60,15 +65,15 @@ const createWindow = (): void => {
       mainWindow.webContents.send('update-background', color)
     })
 
-    // let potentiometer = new five.Sensor({
-    //   pin: "A0",
-    //   frequency: 250,
-    //   threshold: 5
-    // });
-    // potentiometer.on("change", function () {
-    //   console.log(this.value / 1023.0)
-    //   mainWindow.webContents.send('update-sprite-x', this.value/1023.0)
-    // });
+    let potentiometer = new five.Sensor({
+      pin: "A0",
+      frequency: 250,
+      threshold: 5
+    });
+    potentiometer.on("change", function () {
+      console.log(this.value)
+      mainWindow.webContents.send('update-position-x', (this.value/1023.0) * 2.0 - 1.0)
+    });
   })
 
 //   setInterval(()=>{

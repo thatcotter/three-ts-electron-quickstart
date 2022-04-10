@@ -51,7 +51,7 @@ function initGUI() {
 	const gui = new DAT.GUI();
 	gui.add(model, 'groupX', -4, 4, 0.1)
 	gui.add(model, 'groupY', -3, 3, 0.1)
-	gui.add(model, 'groupAngle', 0, Math.PI*2.0, 0.1)
+	gui.add(model, 'groupAngle', -Math.PI, Math.PI, 0.1).listen()
 }
 
 function initScene() {
@@ -100,6 +100,12 @@ function initListeners() {
 		console.log(event)
 		console.log(value)
 		viewTwo.scene.background = new THREE.Color(value)
+	})
+
+	window.electronAPI.updatePositionX((event: any, value: any) => {
+		console.log(event)
+		console.log(value)
+		model.groupAngle = value * -Math.PI;
 	})
 
 	window.addEventListener('resize', onWindowResize, false);
@@ -174,6 +180,12 @@ function animate() {
 	switch (model.activeView) {
 		case 0:
 			viewOne.update(clock,delta);
+			// if(model.groupAngle < 0) {
+			// 	window.electronAPI.writeLEDStatus(0)
+			// } else {
+			// 	window.electronAPI.writeLEDStatus(1)
+			// }
+			window.electronAPI.writeLEDBrightness((model.groupAngle + Math.PI) / (Math.PI*2))
 			break;
 
 		case 1:
@@ -209,8 +221,9 @@ interface ColorMaterial extends THREE.Material {
 
 export interface IElectronAPI {
 	handleBackground: (callback: (event: any, value: any) => void) => void;
-	// updateSpriteX: (callback: (event:any, value:any) => void) => void,
-	// writeLEDStatus: (onOff:1|0) => any
+	updatePositionX: (callback: (event:any, value:any) => void) => void,
+	writeLEDStatus: (onOff:1|0) => any
+	writeLEDBrightness: (brightness: number) => any
 }
 
 declare global {
