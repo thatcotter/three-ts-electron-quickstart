@@ -19,10 +19,14 @@ import {
 	Vector2
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { BaseView } from "./BaseView";
 
 import texturePath from '../assets/textures/uv_grid_opengl.jpg'
 import modelPath from '../assets/models/exampleModel.gltf'
+import myFont from '../assets/fonts/Fira_Code_Regular.json'
 
 export class ViewOne extends BaseView{
 
@@ -37,8 +41,14 @@ export class ViewOne extends BaseView{
 
 	shaderMat: ShaderMaterial;
 
+	textMesh: Mesh;
+	loader: FontLoader;
+
 	constructor(model: any, renderer: WebGLRenderer){
 		super(model, renderer);
+
+		// console.log(modelPath)
+		// console.log(myFont)
 
 		this.exampleModel = new Group();
 		this.exampleTexture = new Texture();
@@ -131,6 +141,27 @@ export class ViewOne extends BaseView{
 		}, undefined, (err)=> {
 			console.log(err)
 		});
+
+		this.loader = new FontLoader()
+
+		const fontData = this.loader.parse(myFont)
+
+		// console.log(fontData)
+
+		const textGeo = new TextGeometry("hello, world!", {
+			font: fontData,
+			size: 0.5,
+			height: 1,
+			curveSegments: 4,
+		});
+
+		const textMat = new MeshPhongMaterial({ color: 0x3486ac })
+
+		this.textMesh = new Mesh(textGeo, textMat)
+		this.textMesh.position.y += 2;
+		this.textMesh.position.x -= 4;
+
+		this.scene.add(this.textMesh)
 	}
 
 	update(clock: Clock, delta: number): void {
